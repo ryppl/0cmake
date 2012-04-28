@@ -22,7 +22,7 @@
 
   <group license="OSI Approved :: Boost Software License 1.0 (BSL-1.0)">
     <implementation id='.' version='0.8-pre-201204281437' stability="testing"/>
-    <command name='run' path='zerorunner.py'>
+    <command name='run' path='zerocmake.py'>
       <runner interface='http://repo.roscidus.com/python/python'>
         <version before='3'/>
       </runner>
