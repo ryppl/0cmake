@@ -53,7 +53,7 @@ def run(args):
         cmake(
             common_args
             + {'dbg':['-DBUILD_TYPE=Debug '], 'bin':['-DBUILD_TYPE=Release ']}.get(args.component, [])
-            + [ './source' ])
+            + [ SRCDIR ])
 
         # build
         cmake(
