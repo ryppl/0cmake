@@ -1,6 +1,8 @@
 <?xml version='1.0' ?>
 <?xml-stylesheet type='text/xsl' href='interface.xsl'?>
-<interface uri='http://ryppl.github.com/feeds/ryppl/0cmake.xml' xmlns='http://zero-install.sourceforge.net/2004/injector/interface'>
+<interface uri='http://ryppl.github.com/feeds/ryppl/0cmake.xml' 
+           xmlns='http://zero-install.sourceforge.net/2004/injector/interface'
+           xmlns:dc='http://purl.org/dc/elements/1.1/'>
   <name>0cmake</name>
   <summary>0compile utility for CMake-based Ryppl projects</summary>
   <description>
@@ -12,11 +14,14 @@
    &lt;/runner&gt;
   &lt;/command&gt;
   </description>
-
+  <category>Development</category>
+  <category>Building</category>
   <homepage>http://github.com/ryppl/0cmake</homepage>
+  <dc:author>Dave Abrahams &lt;dave@boostpro.com&gt;</dc:author>
   <feed-for interface='http://ryppl.github.com/feeds/ryppl/0cmake.xml'/>
 
-  <implementation id='.' version='0.8-pre-201204281437'>
+  <group license="OSI Approved :: Boost Software License 1.0 (BSL-1.0)">
+    <implementation id='.' version='0.8-pre-201204281437' stability="testing"/>
     <command name='run' path='zerorunner.py'>
       <runner interface='http://repo.roscidus.com/python/python'>
         <version before='3'/>
@@ -26,5 +31,5 @@
         <environment name='RYPPL_CMAKE_MODULE_PATH' insert='.' mode='replace'/>
       </requires>
     </command>
-  </implementation>
+  </group>
 </interface>
