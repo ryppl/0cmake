@@ -37,9 +37,13 @@ def run(args):
 
         
         common_args = (
-            '-DRYPPL_DISABLE_TESTS=1', 
-            '-DCMAKE_MODULE_PATH='+args.cmake_module_path, 
-            '-DCOMPONENT='+args.component )
+            '-DCMAKE_MODULE_PATH='+args.cmake_module_path
+          , '-DCOMPONENT='+args.component
+          , '-DRYPPL_DISABLE_TESTS=1'
+          , '-DRYPPL_DISABLE_EXAMPLES=1')
+
+        if args.component != 'doc':
+            common_args += ('-DRYPPL_DISABLE_DOCS=1',)
 
         # configure
         cmake(
