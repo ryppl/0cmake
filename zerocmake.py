@@ -36,7 +36,10 @@ def run(args):
             cmake(['-E', 'copy_directory', args.overlay, SRCDIR])
 
         
-        common_args = ('-DCMAKE_MODULE_PATH='+args.cmake_module_path, '-DCOMPONENT='+component )
+        common_args = (
+            '-DRYPPL_DISABLE_TESTS=1', 
+            '-DCMAKE_MODULE_PATH='+args.cmake_module_path, 
+            '-DCOMPONENT='+component )
 
         # configure
         cmake(
