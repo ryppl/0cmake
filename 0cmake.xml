@@ -1,0 +1,30 @@
+<?xml version='1.0' ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface uri='http://ryppl.github.com/feeds/ryppl/0cmake.xml' xmlns='http://zero-install.sourceforge.net/2004/injector/interface'>
+  <name>0cmake</name>
+  <summary>0compile utility for CMake-based Ryppl projects</summary>
+  <description>
+0cmake can be used in a Ryppl project's 0install feed to build and install the feed from source.  For example:
+
+  &lt;command name='compile'&gt;
+   &lt;runner interface='http://ryppl.github.com/feeds/ryppl/0cmake.xml'/&gt;
+     &lt;arg&gt;--component=bin&lt;/arg&gt;
+   &lt;/runner&gt;
+  &lt;/command&gt;
+  </description>
+
+  <homepage>http://github.com/ryppl/0runner</homepage>
+  <feed-for interface='http://ryppl.github.com/feeds/ryppl/0runner.xml'/>
+
+  <implementation id='.' version='1.0-post'>
+    <command name='run' path='zerorunner.py'>
+      <runner interface='http://repo.roscidus.com/python/python'>
+        <version before='3'/>
+      </runner>
+      <requires interface='http://ryppl.github.com/feeds/ryppl/CMakeSupport.xml'>
+        <version not-before='1.49-post-201204281412' />
+        <environment name='RYPPL_CMAKE_MODULE_PATH' insert='.' mode='replace'/>
+      </requires>
+    </command>
+  </implementation>
+</interface>
