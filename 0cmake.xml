@@ -13,8 +13,8 @@
   &lt;/command&gt;
   </description>
 
-  <homepage>http://github.com/ryppl/0runner</homepage>
-  <feed-for interface='http://ryppl.github.com/feeds/ryppl/0runner.xml'/>
+  <homepage>http://github.com/ryppl/0cmake</homepage>
+  <feed-for interface='http://ryppl.github.com/feeds/ryppl/0cmake.xml'/>
 
   <implementation id='.' version='1.0-post'>
     <command name='run' path='zerorunner.py'>
