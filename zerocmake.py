@@ -37,14 +37,17 @@ def run(args):
             cmake(['-E', 'copy_directory', args.overlay, SRCDIR])
 
         
-        common_args = (
+        common_args = [
             '-DCMAKE_MODULE_PATH='+args.cmake_module_path
           , '-DCOMPONENT='+args.component
           , '-DRYPPL_DISABLE_TESTS=1'
-          , '-DRYPPL_DISABLE_EXAMPLES=1')
+          , '-DRYPPL_DISABLE_EXAMPLES=1']
+
+        print '###', 2
 
         if args.component != 'doc':
-            common_args += ('-DRYPPL_DISABLE_DOCS=1',)
+            common_args.append('-DRYPPL_DISABLE_DOCS=1')
+
 
         # configure
         cmake(
@@ -67,6 +70,7 @@ def run(args):
     except:
         if args.overlay:
             shutil.rmtree(SRCDIR, ignore_errors=True)
+        raise
 
 def envvar(name):
     return '%'+name+'%' if sys.platform == 'windows' else '${'+name+'}'
