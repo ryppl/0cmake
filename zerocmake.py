@@ -39,19 +39,19 @@ def run(args):
         common_args = (
             '-DRYPPL_DISABLE_TESTS=1', 
             '-DCMAKE_MODULE_PATH='+args.cmake_module_path, 
-            '-DCOMPONENT='+component )
+            '-DCOMPONENT='+args.component )
 
         # configure
         cmake(
             common_args
-            + {'dbg':['-DBUILD_TYPE=Debug '], 'bin':['-DBUILD_TYPE=Release ']}.get(component, [])
+            + {'dbg':['-DBUILD_TYPE=Debug '], 'bin':['-DBUILD_TYPE=Release ']}.get(args.component, [])
             + [ './source' ])
 
         # build
         cmake(
             common_args
             + ['--build .'] 
-            + {'doc':['--target','documentation']}.get(component,[]) )
+            + {'doc':['--target','documentation']}.get(args.component,[]) )
 
         # install
         cmake(
