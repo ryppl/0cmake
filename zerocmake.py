@@ -4,6 +4,7 @@ import sys
 import argparse
 from os import environ
 import tempfile
+import shutil
 
 def _0launch(args, **kw):
     if not kw.get('noreturn'):
@@ -75,17 +76,18 @@ if __name__ == '__main__':
         description='0compile utility for CMake-based Ryppl projects')
 
     parser.add_argument(
-        'component'
+        '--component'
       , choices=['dev','bin','doc','dbg']
+      , required=True
       , help='the CMake component to be built')
 
     parser.add_argument(
-      , '--source'
+        '--source'
       , default=environ['SRCDIR']
       , help='The directory of the package source.  Defaults to '+envvar('SRCDIR'))
 
     parser.add_argument(
-      , '--prefix'
+        '--prefix'
       , default=environ['DISTDIR']
       , help='The installation directory.  Defaults to '+envvar('DISTDIR'))
 
@@ -94,7 +96,7 @@ if __name__ == '__main__':
       , help='A directory to be overlaid on the source directory before building')
 
     parser.add_argument(
-      , '--cmake-module-path'
+        '--cmake-module-path'
       , default=environ['RYPPL_CMAKE_MODULE_PATH']
       , help='Passed to CMake as CMAKE_MODULE_PATH.  Defaults to '+envvar('RYPPL_CMAKE_MODULE_PATH'))
 
