@@ -56,7 +56,7 @@ def run(args):
 
         print '0cmake: installing...'
         cmake(
-              '-DCOMPONENT='+args.component
+              ['-DCOMPONENT='+args.component]
             + ['-DCMAKE_INSTALL_PREFIX='+args.prefix, '-P', 'cmake_install.cmake']
             , noreturn=args.overlay is None)
 
