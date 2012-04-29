@@ -43,7 +43,7 @@ def run(args):
         print '0cmake: configuring...'
         cmake([
                 '-DCMAKE_MODULE_PATH='+args.cmake_module_path
-              , '-DBUILD_TYPE='+ ('Debug' if args.component == 'dbg' else 'Release')
+              , '-DCMAKE_BUILD_TYPE='+ ('Debug' if args.component == 'dbg' else 'Release')
               ]
             + ([] if args.component == 'doc' else [ '-DRYPPL_DISABLE_DOCS=1' ])
             + [ '-DRYPPL_DISABLE_TESTS=1', '-DRYPPL_DISABLE_EXAMPLES=1' ]
