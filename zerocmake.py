@@ -41,7 +41,7 @@ def run(args):
 
         
         common_args = [
-            '-DCMAKE_MODULE_PATH='+args.cmake_module_path+'/Modules'
+            '-DCMAKE_MODULE_PATH='+args.cmake_module_path
           , '-DCOMPONENT='+args.component
           , '-DRYPPL_DISABLE_TESTS=1'
           , '-DRYPPL_DISABLE_EXAMPLES=1']
