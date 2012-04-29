@@ -24,7 +24,7 @@ def _0launch(args, **kw):
         cli.main(args)
 
 def cmake(args, **kw):
-    _0launch(['--not-before=2.8.8', 'http://afb.users.sourceforge.net/zero-install/interfaces/cmake.xml'] + args, **kw)
+    _0launch(['--not-before=2.8.8', 'http://ryppl.github.com/feeds/cmake.xml'] + args, **kw)
 
 def run(args):
 
