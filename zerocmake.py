@@ -1,5 +1,5 @@
 from zeroinstall.injector import cli
-from multiprocessing import Process
+from subprocess import check_call
 import sys
 import argparse
 from os import environ
@@ -9,17 +9,18 @@ import shutil
 def _0launch(args, **kw):
     print '0cmake: 0launch '+' '.join(repr(x) for x in args)
     if not kw.get('noreturn'):
-        # Because on *nix, the 0launch process replaces itself with
-        # the process being launched, we must run 0launch in a
-        # subprocess if we want to get control back afterwards.
-        p = Process(target = cli.main, args=(args,))
-        p.start()
-        p.join()
-        if p.exitcode:
-            exit(p.exitcode)
+        # Run 0launch in a subprocess so we get control back
+        # afterwards.  Otherwise the 0launch process *replaces* itself
+        # with the process being launched (on posix).
+        check_call(
+            [sys.executable
+             , '-c', 'import sys\n'
+                     'from zeroinstall.injector import cli\n'
+                     'cli.main(sys.argv[1:])\n']
+            + list(args))
     else:
         # The caller has told us he doesn't need to regain control, so
-        # launch this command directly.
+        # launch the command directly.
         cli.main(args)
     
 def cmake(args, **kw):
