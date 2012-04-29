@@ -43,8 +43,6 @@ def run(args):
           , '-DRYPPL_DISABLE_TESTS=1'
           , '-DRYPPL_DISABLE_EXAMPLES=1']
 
-        print '###', 2
-
         if args.component != 'doc':
             common_args.append('-DRYPPL_DISABLE_DOCS=1')
 
