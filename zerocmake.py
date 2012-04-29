@@ -58,7 +58,7 @@ def run(args):
         # build
         cmake(
             common_args
-            + ['--build .'] 
+            + ['--build', '.'] 
             + {'doc':['--target','documentation']}.get(args.component,[]) )
 
         # install
