@@ -7,6 +7,7 @@ import tempfile
 import shutil
 
 def _0launch(args, **kw):
+    print '0cmake: 0launch '+' '.join(repr(x) for x in args)
     if not kw.get('noreturn'):
         # Because on *nix, the 0launch process replaces itself with
         # the process being launched, we must run 0launch in a
@@ -33,6 +34,7 @@ def run(args):
 
     try:
         if args.overlay:
+            print '0cmake: preparing source directory with overlay...'
             cmake(['-E', 'copy_directory', args.source, SRCDIR])
             cmake(['-E', 'copy_directory', args.overlay, SRCDIR])
 
@@ -46,20 +48,19 @@ def run(args):
         if args.component != 'doc':
             common_args.append('-DRYPPL_DISABLE_DOCS=1')
 
-
-        # configure
+        print '0cmake: configuring...'
         cmake(
             common_args
             + {'dbg':['-DBUILD_TYPE=Debug '], 'bin':['-DBUILD_TYPE=Release ']}.get(args.component, [])
             + [ SRCDIR ])
 
-        # build
+        print '0cmake: building...'
         cmake(
             common_args
             + ['--build', '.'] 
             + {'doc':['--target','documentation']}.get(args.component,[]) )
 
-        # install
+        print '0cmake: installing...'
         cmake(
             common_args
             + ['-DCMAKE_INSTALL_PREFIX='+args.prefix, '-P', 'cmake_install.cmake']
