@@ -22,7 +22,7 @@ def _0launch(args, **kw):
         # The caller has told us he doesn't need to regain control, so
         # launch the command directly.
         cli.main(args)
-    
+
 def cmake(args, **kw):
     _0launch(['--not-before=2.8.8', 'http://afb.users.sourceforge.net/zero-install/interfaces/cmake.xml'] + args, **kw)
 
@@ -39,31 +39,24 @@ def run(args):
             cmake(['-E', 'copy_directory', args.source, SRCDIR])
             cmake(['-E', 'copy_directory', args.overlay, SRCDIR])
 
-        
-        common_args = [
-            '-DCMAKE_MODULE_PATH='+args.cmake_module_path
-          , '-DCOMPONENT='+args.component
-          , '-DRYPPL_DISABLE_TESTS=1'
-          , '-DRYPPL_DISABLE_EXAMPLES=1']
-
-        if args.component != 'doc':
-            common_args.append('-DRYPPL_DISABLE_DOCS=1')
 
         print '0cmake: configuring...'
-        cmake(
-            common_args
-            + {'dbg':['-DBUILD_TYPE=Debug '], 'bin':['-DBUILD_TYPE=Release ']}.get(args.component, [])
+        cmake([
+                '-DCMAKE_MODULE_PATH='+args.cmake_module_path
+              , '-DBUILD_TYPE='+ ('Debug' if args.component == 'dbg' else 'Release')
+              ]
+            + ([] if args.component == 'doc' else [ '-DRYPPL_DISABLE_DOCS=1' ])
+            + [ '-DRYPPL_DISABLE_TESTS=1', '-DRYPPL_DISABLE_EXAMPLES=1' ]
             + [ SRCDIR ])
 
         print '0cmake: building...'
         cmake(
-            common_args
-            + ['--build', '.'] 
+              ['--build', '.']
             + {'doc':['--target','documentation']}.get(args.component,[]) )
 
         print '0cmake: installing...'
         cmake(
-            common_args
+              '-DCOMPONENT='+args.component
             + ['-DCMAKE_INSTALL_PREFIX='+args.prefix, '-P', 'cmake_install.cmake']
             , noreturn=args.overlay is None)
 
