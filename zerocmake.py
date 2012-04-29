@@ -9,8 +9,8 @@ import shutil
 def _0launch(args, **kw):
     if not kw.get('noreturn'):
         # Because on *nix, the 0launch process replaces itself with
-        # the process being launched, if we need to get control back,
-        # we must run 0launch in a subprocess.
+        # the process being launched, we must run 0launch in a
+        # subprocess if we want to get control back afterwards.
         p = Process(target = cli.main, args=(args,))
         p.start()
         p.join()
