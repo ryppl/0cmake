@@ -2,7 +2,7 @@ from zeroinstall.injector import cli
 from subprocess import check_call
 import sys
 import argparse
-from os import environ
+from os import environ as env
 import tempfile
 import shutil
 
@@ -27,74 +27,55 @@ def cmake(args, **kw):
     _0launch(['--not-before=2.8.8', 'http://ryppl.github.com/feeds/cmake.xml'] + args, **kw)
 
 def run(args):
+    use_overlay = args.build_type in ('headers','preinstall','dbg')
+    component = {
+        'headers':'dev', 'preinstall':'dev'
+        }.get(args.build_type) or args.build_type
 
-    if args.overlay:
+    if use_overlay:
         SRCDIR = tempfile.mkdtemp()
     else:
-        SRCDIR = args.source
+        SRCDIR = env['SRCDIR']
 
     try:
-        if args.overlay:
+        if use_overlay:
             print '0cmake: preparing source directory with overlay...'
-            cmake(['-E', 'copy_directory', args.source, SRCDIR])
-            cmake(['-E', 'copy_directory', args.overlay, SRCDIR])
+            cmake(['-E', 'copy_directory', env['SRCDIR'], SRCDIR])
+            cmake(['-E', 'copy_directory', env['BOOST_CMAKELISTS_OVERLAY'], SRCDIR])
 
 
         print '0cmake: configuring...'
         cmake([
-                '-DCMAKE_MODULE_PATH='+args.cmake_module_path
-              , '-DCMAKE_BUILD_TYPE='+ ('Debug' if args.component == 'dbg' else 'Release')
+                '-DCMAKE_MODULE_PATH=' + env['RYPPL_CMAKE_MODULE_PATH']
+              , '-DCMAKE_BUILD_TYPE='+ ('Debug' if component == 'dbg' else 'Release')
               ]
-            + ([] if args.component == 'doc' else [ '-DRYPPL_DISABLE_DOCS=1' ])
+            + ([] if component == 'doc' else [ '-DRYPPL_DISABLE_DOCS=1' ])
             + [ '-DRYPPL_DISABLE_TESTS=1', '-DRYPPL_DISABLE_EXAMPLES=1' ]
             + [ SRCDIR ])
 
         print '0cmake: building...'
         cmake(
               ['--build', '.']
-            + {'doc':['--target','documentation']}.get(args.component,[]) )
+            + {'doc':['--target','documentation']}.get(component,[]) )
 
         print '0cmake: installing...'
         cmake(
-              ['-DCOMPONENT='+args.component]
-            + ['-DCMAKE_INSTALL_PREFIX='+args.prefix, '-P', 'cmake_install.cmake']
-            , noreturn=args.overlay is None)
+              ['-DCOMPONENT='+component]
+            + ['-DCMAKE_INSTALL_PREFIX='+env['DISTDIR'], '-P', 'cmake_install.cmake']
+            , noreturn=not use_overlay)
 
     except:
-        if args.overlay:
+        if use_overlay:
             shutil.rmtree(SRCDIR, ignore_errors=True)
         raise
-
-def envvar(name):
-    return '%'+name+'%' if sys.platform == 'windows' else '${'+name+'}'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='0compile utility for CMake-based Ryppl projects')
 
     parser.add_argument(
-        '--component'
-      , choices=['dev','bin','doc','dbg']
-      , required=True
-      , help='the CMake component to be built')
-
-    parser.add_argument(
-        '--source'
-      , default=environ['SRCDIR']
-      , help='The directory of the package source.  Defaults to '+envvar('SRCDIR'))
-
-    parser.add_argument(
-        '--prefix'
-      , default=environ['DISTDIR']
-      , help='The installation directory.  Defaults to '+envvar('DISTDIR'))
-
-    parser.add_argument(
-        '--overlay'
-      , help='A directory to be overlaid on the source directory before building')
-
-    parser.add_argument(
-        '--cmake-module-path'
-      , default=environ['RYPPL_CMAKE_MODULE_PATH']
-      , help='Passed to CMake as CMAKE_MODULE_PATH.  Defaults to '+envvar('RYPPL_CMAKE_MODULE_PATH'))
+        'build_type'
+      , choices=('headers','bin','dev','doc','dbg','preinstall')
+      , help='Determines the type of build/install step to perform')
 
     run(parser.parse_args())
