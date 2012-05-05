@@ -70,7 +70,7 @@ def run(args):
 
 
     _msg('configuring...')
-    config_args = ['-DCMAKE_VERBOSE_MAKEFILE=1',
+    config_args = [ #'-DCMAKE_VERBOSE_MAKEFILE=1',
             '-DCMAKE_MODULE_PATH=' + env['RYPPL_CMAKE_MODULE_PATH']
           , '-DCMAKE_BUILD_TYPE='+ ('Debug' if component == 'dbg' else 'Release')
           , '-DRYPPL_DISABLE_TESTS=1', '-DRYPPL_DISABLE_EXAMPLES=1'
