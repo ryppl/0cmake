@@ -89,7 +89,7 @@ def run(args):
     _msg('building...')
     cmake(
           ['--build', '.']
-        + {'doc':['--target','documentation']}.get(component,[]) )
+        + {'doc':['--target','documentation']}.get(component,[]) + ['--', '-j8'] )
 
     if args.build_type in ('preinstall','cluster'):
         _msg('adjusting installation scripts...')
