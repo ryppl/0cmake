@@ -1,5 +1,5 @@
 from zeroinstall.injector import cli
-from subprocess import check_call
+from subprocess import Popen, PIPE, CalledProcessError
 import sys
 import argparse
 from os import environ as env
@@ -14,25 +14,44 @@ def _msg(*args):
     print
     sys.stdout.flush()
 
+key = '-- Build files have been written to: '
+
 def _0launch(args, **kw):
     _msg('0launch '+' '.join(repr(x) for x in args))
     if not kw.get('noreturn'):
         # Run 0launch in a subprocess so we get control back
         # afterwards.  Otherwise the 0launch process *replaces* itself
         # with the process being launched (on posix).
-        check_call(
-            [sys.executable
-             , '-c', 'import sys\n'
-                     'from zeroinstall.injector import cli\n'
-                     'cli.main(sys.argv[1:])\n']
-            + list(args))
+        cmd = [
+            sys.executable, '-c', 
+            'import sys\n'
+            'from zeroinstall.injector import cli\n'
+            'cli.main(sys.argv[1:])\n' ] + list(args)
+
+        p = Popen(cmd, stdout=PIPE)
+        ret = None
+
+        retcode = None
+        while retcode is None:
+            retcode = p.poll()
+            line = None
+            while line != '':
+                line = p.stdout.readline()
+                if line.startswith(key):
+                    ret = line[len(key):-1]
+                sys.stdout.write(line);sys.stdout.flush()
+
+        if retcode:
+            raise CalledProcessError(retcode, cmd)
+
+        return ret
     else:
         # The caller has told us he doesn't need to regain control, so
         # launch the command directly.
         cli.main(args)
 
 def cmake(args, **kw):
-    _0launch(['--not-before=2.8.8', 'http://ryppl.github.com/feeds/cmake.xml'] + args, **kw)
+    return _0launch(['--not-before=2.8.8', 'http://ryppl.github.com/feeds/cmake.xml'] + args, **kw)
 
 def run(args):
     use_overlay = args.build_type in ('headers','preinstall','cluster','dbg')
@@ -80,7 +99,7 @@ def run(args):
         config_args.append( '-DRYPPL_DISABLE_DOCS=1')
 
     config_args.append(SRCDIR)
-    cmake(['-DRYPPL_INITIAL_PASS=1']+config_args)
+    build_dir = cmake(['-DRYPPL_INITIAL_PASS=1']+config_args) + '/'
 
     if args.build_type in ('preinstall','cluster'):
         _msg('2nd configuration pass...')
@@ -98,8 +117,6 @@ def run(args):
             if script_name in filenames:
                 script_path = os.path.join(root, script_name)
                 old_script = open(script_path).read()
-
-                build_dir = os.getcwd() + '/'
 
                 assert build_dir in old_script or root != '.' \
                     , "Couldn't find %s in %s:\n" % (build_dir, script_path) + old_script
